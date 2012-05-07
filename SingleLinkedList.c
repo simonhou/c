@@ -7,7 +7,7 @@
 * Author: Simon Hou
 * Created Time: 2012.05.06
 * File Name: SingleLinkedList.c
-* Description:  实现单向链表的建立，包括头插法，和尾插法，以及一个链表反转非递归实现
+* Description:  实现单向链表的建立，包括头插法，和尾插法，以及链表反转非递归实现
 * Input : abd##e##cf##g##
 */
 #include <stdio.h>
@@ -106,6 +106,32 @@ LinkList ListReverse(LinkList L)
     return ReverseHead;     //Return the new head
 
 }
+// 另一种实现，该方法额外申请了一个Node,将旧链表后的节点依次链入, 使用头插法构建链表
+LinkList ListReverse2(LinkList L)
+{
+	Node *temp;
+	temp = L;
+	LinkList nList;
+	if(L == NULL || (nList = (LinkList)malloc(sizeof(LinkList))) == NULL)
+	{
+		return NULL;
+	}
+	nList->data = L->data;
+	nList->next = NULL;
+
+	while(L->next != NULL)
+	{
+		temp = nList->next;  // 先保存新链表后续节点指针
+		nList->next = L->next; //旧节点插入新节点
+		L->next = L->next->next; //从旧链表中删除旧节点
+		nList->next->next = temp; //完整插入新链表中
+
+	}
+
+	free(L);
+	return nList;
+
+}
 
 int main()
 {
@@ -119,7 +145,8 @@ int main()
 //    printList(L);
     printList(LR);
     printf("\nReverse list:\n");
-    revL = ListReverse(LR);
+    revL = ListReverse2(LR);
+
     printList(revL);
     return 0;
 }
